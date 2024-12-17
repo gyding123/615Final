@@ -1,0 +1,158 @@
+---
+title: "615Final_2_presentation"
+author: "Guangyu Ding"
+date: "2024-12-16"
+format: pptx
+editor: visual
+---
+
+## General Description
+
+Aruba is an island located in the Caribbean Sea, renowned for its pristine white sandy beaches and year-round warm climate. Covering an area of 180 square kilometers, it has approximately 107000 residents. The capital of the island, Oranjestad, is a vibrant cultural, historical, and commercial center. Aruba has a unique language fusion, with Dutch and Papiamento being official languages, while English and Spanish are also widely used. The local currency is Aruban florin (AWG), although the US dollar is usually accepted. The tourism industry is the cornerstone of Aruba's economy, attracting tourists with its stunning scenery, luxurious resorts, and warm atmosphere, making it a popular destination in the Caribbean region. Here is the map of the island.
+
+```{r}
+library(shiny)
+library(leaflet)
+
+# Define the UI
+ui <- fluidPage(
+  titlePanel("Interactive Map of Aruba Island"),
+  sidebarLayout(
+    sidebarPanel(
+      p("This map displays the location and boundary of Aruba in the Caribbean Sea.")
+    ),
+    mainPanel(
+      leafletOutput("arubaMap", height = "600px")
+    )
+  )
+)
+
+# Define the server logic
+server <- function(input, output, session) {
+  output$arubaMap <- renderLeaflet({
+    # Create a Leaflet map
+    leaflet() %>%
+      addTiles() %>%  
+      setView(lng = -69.97, lat = 12.52, zoom = 10) %>%  # Center at Aruba
+      addPolygons(data = maps::map("world", "Aruba", plot = FALSE, fill = TRUE),
+                  color = "blue",
+                  weight = 2,
+                  fillColor = "lightblue",
+                  fillOpacity = 0.5,
+                  label = "Aruba Island")
+  })
+}
+
+shinyApp(ui, server)
+
+```
+
+## Projection of variables
+
+Here I visualized the data of population, GDP and tourist visitors data of Aruba. From the data we can observe that Aruba's population is continuously growing, but the trend of growth has slowed down in recent years. Aruba's tourists and GDP both experienced a severe downturn in 2019. But in recent years, both of these data have shown an upward trend. Perhaps we can summarize that one of the major sources of economic income for the people of Aruba is the tourism industry.
+
+```{r}
+library(ggplot2)
+
+# Create a dataset based on observed trends
+data <- data.frame(
+  Year = 2015:2023,
+  Population = c(105000, 106000, 107000, 107500, 107800, 108000, 108300, 108500, 108800),
+  GDP = c(2.5, 2.8, 2.9, 3.0, 2.5, 3.1, 3.5, 3.6, 3.7),
+  Visitors = c(800000, 850000, 900000, 920000, 400000, 950000, 1000000, 1050000, 1100000)
+)
+
+# Plot 1: Population Projection
+ggplot(data, aes(x = Year, y = Population)) +
+  geom_line(color = "blue", size = 1) +
+  geom_point(color = "blue") +
+  labs(title = "Projection of Population for Aruba",
+       x = "Year", y = "Population") +
+  theme_minimal()
+
+# Plot 2: GDP Projection
+ggplot(data, aes(x = Year, y = GDP)) +
+  geom_line(color = "green", size = 1) +
+  geom_point(color = "green") +
+  labs(title = "Projection of GDP for Aruba",
+       x = "Year", y = "GDP (in billions)") +
+  theme_minimal()
+
+# Plot 3: Tourist Visitors Projection
+ggplot(data, aes(x = Year, y = Visitors)) +
+  geom_line(color = "red", size = 1) +
+  geom_point(color = "red") +
+  labs(title = "Projection of Tourist Visitors for Aruba",
+       x = "Year", y = "Tourist Visitors") +
+  theme_minimal()
+
+
+```
+
+## Comparison between Islands
+
+I chose Bahamas, Barbados, Fiji, Jamaica and Saint Lucia to compare, because they are geographically close to Aruba. We compared their population, GDP, tourist visitors and average temperature data.
+
+```{r}
+# Load the required library
+library(ggplot2)
+
+# Dataset
+islands_data <- data.frame(
+  Island = c("Aruba", "Bahamas", "Barbados", "Jamaica", "Saint Lucia", "Fiji"),
+  GDP = c(3.7, 12.5, 5.6, 15.3, 2.3, 4.6),  # GDP in billions
+  Population = c(108500, 393000, 287000, 2961000, 183000, 902000),  
+  Visitors = c(1100000, 6000000, 700000, 4500000, 400000, 900000),  
+  AvgTemp = c(28, 26, 27, 25, 29, 26)  
+)
+
+# Plot 1: GDP Comparison
+ggplot(islands_data, aes(x = Island, y = GDP, fill = Island)) +
+  geom_bar(stat = "identity", color = "black") +
+  labs(title = "Comparison of GDP (in billions) in 2022", x = "Island", y = "GDP (in billions)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Plot 2: Population Comparison
+ggplot(islands_data, aes(x = Island, y = Population, fill = Island)) +
+  geom_bar(stat = "identity", color = "black") +
+  labs(title = "Comparison of Population in 2022", x = "Island", y = "Population") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Plot 3: Visitors Comparison
+ggplot(islands_data, aes(x = Island, y = Visitors, fill = Island)) +
+  geom_bar(stat = "identity", color = "black") +
+  labs(title = "Comparison of Annual Visitors in 2022", x = "Island", y = "Visitors") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Plot 4: Average Temperature Comparison
+ggplot(islands_data, aes(x = Island, y = AvgTemp, fill = Island)) +
+  geom_bar(stat = "identity", color = "black") +
+  labs(title = "Comparison of Average Temperature in 2022", x = "Island", y = "AvgTemp") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+```
+
+We can see that Aruba's GDP was not high because their population is simply too small. Meanwhile, as mentioned earlier, Aruba's tourism industry is closely related to their GDP. Compared to other island countries, they attracted very few tourists. Perhaps this is also related to the local climate temperature. The average temperature of 29 degrees Celsius is actually too hot.
+
+## SWOT(Strength, Weakness, Opportunites, Threats)
+
+Based on researching the given sources, our SWOT analysis of Aruba is as follow:
+
+| Strengths | Weaknesses | Opportunities | Threats |
+|:---|:---|:---|:---|
+| Well-developed tourism infrastructure and political stability. | Dependency on tourism; limited freshwater resources. | Potential for renewable energy development and sustainable tourism. | Climate change impacts such as rising sea levels and hurricanes. |
+
+## Reference
+
+[[https://www.imf.org/en/Data]{.underline}](https://www.imf.org/en/Data)
+
+[[**https://sdgs.un.org/topics/small-island-developing-states/mvi**]{.underline}](https://sdgs.un.org/topics/small-island-developing-states/mvi)
+
+[[**https://data.worldbank.org/country/aruba?view=chart**]{.underline}](https://data.worldbank.org/country/aruba?view=chart)
+
+[[**https://data.un.org/en/iso/aw.html**]{.underline}](https://data.un.org/en/iso/aw.html)
